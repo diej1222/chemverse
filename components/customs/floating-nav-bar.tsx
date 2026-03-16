@@ -8,6 +8,7 @@ import {
   BrainCircuit,
   FlaskConical,
   Gamepad2,
+  HomeIcon,
   type LucideIcon,
 } from "lucide-react";
 
@@ -21,6 +22,7 @@ interface NavItem {
 }
 
 const NAV_ITEMS: NavItem[] = [
+  { label: "Home", href: "/", icon: HomeIcon },
   { label: "Lessons", href: "/lessons", icon: BookOpen },
   { label: "Quiz", href: "/quiz", icon: BrainCircuit },
   { label: "Experiments", href: "/experiments", icon: FlaskConical },
