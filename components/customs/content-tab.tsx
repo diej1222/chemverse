@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import {
   DropdownMenu,
@@ -29,6 +29,20 @@ interface ContentTabProps {
   className?: string;
 }
 
+const useIsMobile = () => {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const mql = window.matchMedia("(max-width: 768px)");
+    setIsMobile(mql.matches);
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mql.addEventListener("change", handler);
+    return () => mql.removeEventListener("change", handler);
+  }, []);
+
+  return isMobile;
+};
+
 export const ContentTab = ({
   tabs,
   defaultValue,
@@ -36,8 +50,13 @@ export const ContentTab = ({
   className,
 }: ContentTabProps) => {
   const [active, setActive] = useState(defaultValue ?? tabs[0]?.value);
+  const isMobile = useIsMobile();
 
   const activeTab = tabs.find((t) => t.value === active);
+
+  // if already horizontal, stay horizontal; if vertical on mobile, switch to horizontal
+  const resolvedOrientation =
+    orientation === "horizontal" || isMobile ? "horizontal" : "vertical";
 
   const renderTrigger = (tab: ContentTabItem, extraClass?: string) => {
     const isActive = active === tab.value;
@@ -87,80 +106,80 @@ export const ContentTab = ({
     );
   };
 
-  return (
-    <>
-      {orientation === "horizontal" ? (
-        <div className={cn("w-full", className)}>
-          <ScrollArea className="w-full">
-            <div className="flex gap-1 border-b border-border">
-              {tabs.map((tab) => {
-                const isActive = active === tab.value;
+  if (resolvedOrientation === "horizontal") {
+    return (
+      <div className={cn("w-full", className)}>
+        <ScrollArea className="w-full">
+          <div className="flex gap-1 border-b border-border">
+            {tabs.map((tab) => {
+              const isActive = active === tab.value;
 
-                if (tab.actions?.length) {
-                  return (
-                    <DropdownMenu key={tab.value}>
-                      <DropdownMenuTrigger asChild>
-                        <button
-                          className={cn(
-                            "shrink-0 px-4 py-2.5 text-sm font-medium transition-colors relative cursor-pointer",
-                            "text-muted-foreground hover:text-foreground",
-                            isActive &&
-                              "text-foreground after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-foreground",
-                          )}
-                        >
-                          {tab.name}
-                        </button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="start">
-                        <DropdownMenuItem onClick={() => setActive(tab.value)}>
-                          View content
-                        </DropdownMenuItem>
-                        {tab.actions.map((action) => (
-                          <DropdownMenuItem
-                            key={action.label}
-                            onClick={action.onClick}
-                          >
-                            {action.label}
-                          </DropdownMenuItem>
-                        ))}
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  );
-                }
-
+              if (tab.actions?.length) {
                 return (
-                  <button
-                    key={tab.value}
-                    onClick={() => setActive(tab.value)}
-                    className={cn(
-                      "shrink-0 px-4 py-2.5 text-sm font-medium transition-colors relative cursor-pointer",
-                      "text-muted-foreground hover:text-foreground",
-                      isActive &&
-                        "text-foreground after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-foreground",
-                    )}
-                  >
-                    {tab.name}
-                  </button>
+                  <DropdownMenu key={tab.value}>
+                    <DropdownMenuTrigger asChild>
+                      <button
+                        className={cn(
+                          "shrink-0 px-4 py-2.5 text-sm font-medium transition-colors relative cursor-pointer",
+                          "text-muted-foreground hover:text-foreground",
+                          isActive &&
+                            "text-foreground after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-foreground",
+                        )}
+                      >
+                        {tab.name}
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="start">
+                      <DropdownMenuItem onClick={() => setActive(tab.value)}>
+                        View content
+                      </DropdownMenuItem>
+                      {tab.actions.map((action) => (
+                        <DropdownMenuItem
+                          key={action.label}
+                          onClick={action.onClick}
+                        >
+                          {action.label}
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 );
-              })}
-            </div>
-            <ScrollBar orientation="horizontal" />
-          </ScrollArea>
-          <div className="mt-6 text-sm text-muted-foreground leading-relaxed">
-            {activeTab?.content}
+              }
+
+              return (
+                <button
+                  key={tab.value}
+                  onClick={() => setActive(tab.value)}
+                  className={cn(
+                    "shrink-0 px-4 py-2.5 text-sm font-medium transition-colors relative cursor-pointer",
+                    "text-muted-foreground hover:text-foreground",
+                    isActive &&
+                      "text-foreground after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-foreground",
+                  )}
+                >
+                  {tab.name}
+                </button>
+              );
+            })}
           </div>
+          <ScrollBar orientation="horizontal" />
+        </ScrollArea>
+        <div className="mt-6 text-sm text-muted-foreground leading-relaxed">
+          {activeTab?.content}
         </div>
-      ) : (
-        <div className={cn("flex w-full gap-8", className)}>
-          <div className="flex flex-col gap-0.5 min-w-50 w-50 shrink-0">
-            {tabs.map((tab) => renderTrigger(tab))}
-          </div>
-          <div className="w-px bg-border shrink-0" />
-          <div className="flex-1 min-w-0 text-sm text-muted-foreground leading-relaxed">
-            {activeTab?.content}
-          </div>
-        </div>
-      )}
-    </>
+      </div>
+    );
+  }
+
+  return (
+    <div className={cn("flex w-full gap-8", className)}>
+      <div className="flex flex-col gap-0.5 min-w-50 w-50 shrink-0">
+        {tabs.map((tab) => renderTrigger(tab))}
+      </div>
+      <div className="w-px bg-border shrink-0" />
+      <div className="flex-1 min-w-0 text-sm text-muted-foreground leading-relaxed">
+        {activeTab?.content}
+      </div>
+    </div>
   );
 };
